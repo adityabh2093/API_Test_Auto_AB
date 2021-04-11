@@ -1,0 +1,2 @@
+docker build . -t  robot_framework_api
+docker run --shm-size=4g -e ROBOT_OPTIONS="-i Captcha" -v "`pwd`"/reports:/opt/robotframework/reports:Z -v  "`pwd`"/../AppZen_RobotFramework:/opt/robotframework/tests:Z -e BROWSER=chrome -v  "`pwd`"/reports:/opt/robotframework/temp appzen_robot_framework:latest
