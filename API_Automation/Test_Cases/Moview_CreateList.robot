@@ -30,6 +30,4 @@ Create New List
     Set Suite Variable    ${list_id} 
     Log To Console      ListId=${list_id}       
 
-Add item In List For Movie
-    
-    Add item In List For Movie         ${access_token}         ${list_id}
+

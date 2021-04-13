@@ -2,10 +2,10 @@
 Resource     config_Enviroment.robot  
 
 *** Variables ***
-${Login_LOC}        //h2[text()='Login']/ancestor::div[1]
-${Login_Uname_LOC}       //input[@id="username"] 
-${Login_Uname_PASS}        //input[@id="password"]
-${Login_Uname_BUTTON}     //input[@id="login_button"]
+${Login_LOC}            //h2[text()='Login']/ancestor::div[1]
+${Login_Uname_LOC}      //input[@id="username"] 
+${Login_Uname_PASS}     //input[@id="password"]
+${Login_Uname_BUTTON}   //input[@id="login_button"]
 
 
 *** Keywords *** 

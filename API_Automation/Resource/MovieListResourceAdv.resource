@@ -23,8 +23,12 @@ Create List For Movie   [Arguments]         ${access_token}         ${FileName}
     ${response}=         To Json               ${response.content}  
     ${list_id}=          Get Value From Json   ${response}                id 
     ${StatusMsg}=        Get Value From Json   ${response}                status_message
+    ${status_code}=      Get Value From Json   ${response}                status_code
+    ${status_code}=      Convert to string     ${status_code}
     ${StatusMsg}=        Convert to string     ${StatusMsg}
     Should Be Equal       ${StatusMsg}         ['The item/record was created successfully.']
+    Should Be Equal       ${status_code}         [1]
+    
     
     [Return]   ${list_id}
      
