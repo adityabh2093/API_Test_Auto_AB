@@ -1,10 +1,16 @@
 *** Settings ***    
 Resource     config_Enviroment.robot  
 
+*** Variables ***
+${Login_LOC}        //h2[text()='Login']/ancestor::div[1]
+${Login_Uname_LOC}       //input[@id="username"] 
+${Login_Uname_PASS}        //input[@id="password"]
+${Login_Uname_BUTTON}     //input[@id="login_button"]
 
 
 *** Keywords *** 
-Request Request Token
+Create Request Token
+    [Documentation]    This method creting request token for read and wirte access to user for creating updating Movie list   
     ${headerParams}=   Create Dictionary   Content-Type=application/json;charset=utf-8    Authorization=Bearer ${apiReadAccessToken}
     ${headers}=        Set To Dictionary   ${headerParams}    
        
@@ -23,11 +29,13 @@ Request Request Token
      
    
 Verify User Access    [Arguments]         ${status}      ${Code} 
+    [Documentation]    This method validating access code for APIs
    Should Be Equal As Strings    ${status}    ${Code}  
  
-Approve Access Token    [Arguments]         ${request_token} 
-    
-    ${headerParams}=   Create Dictionary    Content-Type=application/x-www-form-urlencoded        cookie=tmdb.prefs=%7B%22adult%22%3Afalse%2C%22i18n_fallback_language%22%3A%22en-US%22%2C%22locale%22%3A%22en-US%22%2C%22country_code%22%3A%22IN%22%2C%22timezone%22%3A%22Asia%2FCalcutta%22%7D; _ga=GA1.2.413858660.1618075102; _gid=GA1.2.634143328.1618075102; _dc_gtm_UA-2087971-10=1; tmdb.session=AZk5Sk_RUJzuN-IDnW36TF3o1PAxR8eOV2J0LvPJKCSGZ2EwMSOMS-24u-kBO3mb8opO83o4YAOWj57szLUYAcUxMMmkm8P7TQkrEeI8rirk2cNo0kuipimUjH7ZVhRi6nSenT8rBJvH1JRPr4LeQsKcE1qNrK8t60j3cgucL1BrATtSMbqqbBMFT2kGxBPnMi7lamaXE6C1l3KSPPe_8sIvMIQh_W_sU_JRZRS4LfaBIi4UmsmKJ9HkVDowsaKkgGEaMlE7dOPgTtgKyJMVS-hCjRckMGVHhQ0NAAU2RCt7xZe4tM8moiNc3f4Uk0SJTf-dJX2K52uy74CUMaF8H6gnrQmhtH_lLbOimCbbCznbKbcnKKxbBeV1ziy_s7EccmPJW_YLy5PG1NEUBwfu0aBu4mrP8c25YKRvTgboAsRKzoypIuOO-40UhRqwxzinB-_OGLtRO0jiuOX3pS06wj_WKmXvwpvELNhdrvyNmJ76ejJPXU0zeSHtvNKTt4SKLDCXMKwgsyC2vBYhTmSlzXk6cKXhgUCoVgYlK0eyu5p5-I9EKTB9f5VDXXN-33W05E6c6jgdJJ9lg_DnXgQjq5FMBuTxX4HnGoIdcSvichHhFhnMXAE7ANImB9drsR6bRSVWMbAJ0IiulP_lmQBpkCyYnTwFZUDBdqnGM-0D7_KT3j2XgZPYDVwCsb9iDwBaRXOyYRMlyQRwHECqb0gCtyoAZoGUsxcn6SY9inUByDLEKSKdvHnHOKKdhFlXmBPkmBIjiyerzV5kIJdqhx3RWe07F8_v731P_HADUv7bW7yNOYQZ0u5LGDuWlzPwyUeD6A%3D%3D
+Approve Access Token    [Arguments]         ${request_token}         ${jsession}
+    [Documentation]    This method Approving request token ti give read wite access to user
+    ${Session}=    Set variable     tmdb.session=${jsession}
+    ${headerParams}=   Create Dictionary    Content-Type=application/x-www-form-urlencoded        cookie=${Session}
     ${headers}=        Set To Dictionary   ${headerParams}    
        
     ${requestBody}=   Create Dictionary    request_token=${request_token}[0]   submit=Approve 
@@ -39,6 +47,7 @@ Approve Access Token    [Arguments]         ${request_token}
     Verify User Access     ${response.status_code}            200
   
 Request Access Token    [Arguments]         ${request_token} 
+    [Documentation]      This method Create access token after Approve Request Token
     ${headerParams}=   Create Dictionary   Content-Type=application/json;charset=utf-8    Authorization=Bearer ${apiReadAccessToken}
     ${headers}=        Set To Dictionary   ${headerParams} 
     
@@ -56,18 +65,83 @@ Request Access Token    [Arguments]         ${request_token}
     [Return]   ${access_token}
     
 
-
+Login Token   
+        [Documentation]    This method Login to UI and getting tmdb.session from cookies 
+        ${request_token}=    Create Request Token
+        initilize system
+        go to             ${Approve_URL}=${request_token}[0]
+        Click Element     ${Login_LOC}    
+        sleep    2s
+        input text        ${Login_Uname_LOC}      ${Uname}
+        input text        ${Login_Uname_PASS}       1988
+        click element     ${Login_Uname_BUTTON}
+        ${Session}=       Get Cookies    
+        ${Session}=       split string     ${Session}     tmdb.session=
+        ${Session}=       split string     ${Session}[1]    ;
+       
+  [Return]        ${Session}[0]
+        
+     
 Generate Common Access Token 
     [Arguments]         ${request_token}
+    [Documentation]    This method contains 4 keywords which helps us to create access token to creare moview list
     
-    ${request_token}=    Request Request Token
-    Log To Console  requestTokenGenerated!!!
-    Set Suite Variable    ${request_token}            
-    Log To Console    requestToken=${request_token}
-    Log To Console    Approve Request Token
-    Approve Access Token    ${request_token}  
-    ${access_token}=    Request Access Token    ${request_token}
-    Log To Console  accesstoken=${access_token}
-    Set Global Variable    ${access_token} 
+    ###Login to get jsession time id
+    ${jsession}=             Login Token
+    
+    ###Generate  Request token 
+    ${request_token}=       Create Request Token
+    Log To Console          requestTokenGenerated!!!
+    Set Suite Variable      ${request_token}      
+          
+    Log To Console        requestToken=${request_token}
+    Log To Console        Approve Request Token
+    
+    ###Approve Request Token
+    Approve Access Token    ${request_token}               ${jsession}
+    
+    ###Create access token after Approve Request Token
+    ${access_token}=        Request Access Token           ${request_token}
+    Log To Console          accesstoken=${access_token}
+    Set Global Variable     ${access_token} 
 
   [Return]    ${access_token}
+  
+
+initilize system
+       [Documentation]    This method Initialize browser   
+    Run Keyword If      '${OS}'=='windows'    Append To Environment Variable               PATH                  ${EXECDIR}//drivers//   
+    Run Keyword If      '${OS}'=='mac'        Append To Environment Variable               PATH                  ${EXECDIR}/drivers/
+    Chromedriver       
+      
+
+Chromedriver
+   [Documentation]  This method Initialize chrome browser
+   ${Browser}=    Set Variable     Chrome
+    
+    ${chrome options}=  Evaluate                 sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
+    Call Method          ${chrome_options}        add_argument    test-type
+    Call Method          ${chrome_options}        add_argument    --disable-extensions
+    Call Method          ${chrome_options}        add_argument    --disable-dev-shm-usage    
+    Call Method          ${chrome_options}        add_argument    --no-sandbox
+    ${HeadlessFalse}=    Run Keyword And Return Status       Should Contain      ${TEST TAGS}           HeadlessFalse       
+    Call Method          ${chrome_options}         add_argument    headless
+    Create Webdriver     ${Browser}     chrome_options=${chrome options}
+    
+
+  
+
+#Tried Login throgh API and if we get session id 
+     # ${headerParams}=   Create Dictionary    Content-Type=application/x-www-form-urlencoded      authority=www.themoviedb.org            origin=https://www.themoviedb.org
+    # ${headers}=        Set To Dictionary   ${headerParams}    
+       
+    # ${requestBody}=   Create Dictionary    username=ianuppatil   password=password 
+    # ${requestBody}=   Set To Dictionary   ${requestBody} 
+     
+    # Create Session     baseurl    ${approveReuestBaseUrl}
+    # ${response}=       Post Request        baseurl    login  data=${requestBody}      headers=${headers}    
+    # ${jsession} =     Get Value From Json   ${response.headers}  Set-Cookie
+    # log to console      ${jsession}
+    # Verify User Access     ${response.status_code}            200
+     # [Return]        ${jsession}
+

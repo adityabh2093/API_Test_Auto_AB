@@ -17,10 +17,14 @@ Library    ../PythonLibarary/CustomLib.py
 
 *** Variables ***
 
-${apiKey}                b4c8f3ecd7574535c7e2838bcbc29223    
-${apiReadAccessToken}    eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiNGM4ZjNlY2Q3NTc0NTM1YzdlMjgzOGJjYmMyOTIyMyIsInN1YiI6IjYwNmI0NDNjMWNjNGZmMDAyOWM2MWVmNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LVXpKxZrjv7X2_GLPSSKoQAEx2qwVAbK_UiMDFDXv58
-${redirectUrl}           http://www.themoviedb.org/      
-${baseUrl}                https://api.themoviedb.org/4/
-${approveReuestBaseUrl}    https://www.themoviedb.org
-${AccessGeneratePerTestcase}    True
+${apiKey}                       b4c8f3ecd7574535c7e2838bcbc29223    
+${apiReadAccessToken}           eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiNGM4ZjNlY2Q3NTc0NTM1YzdlMjgzOGJjYmMyOTIyMyIsInN1YiI6IjYwNmI0NDNjMWNjNGZmMDAyOWM2MWVmNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LVXpKxZrjv7X2_GLPSSKoQAEx2qwVAbK_UiMDFDXv58
+${redirectUrl}                  http://www.themoviedb.org/      
+${baseUrl}                      https://api.themoviedb.org/4/
+${approveReuestBaseUrl}         https://www.themoviedb.org
+${AccessGeneratePerTestcase}    False
+${Uname}                        ianuppatil
+${Pass}                         1988
+${OS}                           MAC
+${Approve_URL}                  https://www.themoviedb.org/auth/access?request_token  
 

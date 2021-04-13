@@ -1,6 +1,3 @@
-__Author__ = "Shrikant Markad"
-__Creation_Month__ = "Sept,2019"
-
 import os
 import random
 import string
