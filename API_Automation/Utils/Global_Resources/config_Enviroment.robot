@@ -26,5 +26,6 @@ ${AccessGeneratePerTestcase}    False
 ${Uname}                        ianuppatil
 ${Pass}                         1988
 ${OS}                           mac
+${Headless}                      True
 ${Approve_URL}                  https://www.themoviedb.org/auth/access?request_token  
 

@@ -13,7 +13,7 @@ API Testing with Robotframework
 				- Global_Resources
 					- All Common files which are use in project
 				- PythonLibarary
-					- ALl Internal library
+					- All Internal library
 
 		- docker 
 			- Scripts
@@ -22,4 +22,8 @@ API Testing with Robotframework
 			- All Required Drivers 
 
 
-Note :- In config File you need to mentioned your apikey,apiReadAccessToken,Uname and pass if required else cases will run on default parameters 
+Note :- In config File you need to mention your apikey,apiReadAccessToken,Uname and pass if required else cases will run with default parameters 
+   
+
+
+    

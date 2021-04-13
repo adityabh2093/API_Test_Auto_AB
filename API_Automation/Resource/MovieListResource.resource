@@ -4,23 +4,32 @@ Resource        ../Utils/Global_Resources/common_api.resource
 
 *** Keywords ***
 
-Create List For Movie   [Arguments]         ${access_token}
-      [Documentation]    This method creating list for movies
-      
-    ${TestData}=          get config properties without Global       CreateNewList.properties
-    ${headerParams}=      Create Dictionary           Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}[0]
-    ${headers}=           Set To Dictionary           ${headerParams}
-    ${String}=            Generate Random String      3 
-    ${Listname}=          Set Variable                ${TestData}[name]${String}
-    ${request_body}       Set Variable                { "name": "${Listname}", "iso_639_1": "${TestData}[iso_639_1]" }
-    ${json_data}          To Json                     ${request_body}    
+
+Create List For Movie   [Arguments]         ${access_token}         ${FileName}
+    [Documentation]        This method creating list for movies 
     
-    Create Session        baseurl                     ${baseUrl}
-    ${response}=          Post Request    baseurl    list    headers=${headers}     data=${json_data}
+    ${TestData}=         get config properties without Global         ${FileName}
+    ${json_data}=        Update json                     ${TestData}       CreateNewList.json     
+    ${headerParams}=     Create Dictionary               Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}[0]
+    ${headers}=          Set To Dictionary               ${headerParams}
+    ${String}=           Generate Random String          3 
+    ${Listname}=         Set Variable                    ${TestData}[name]${String}
+    
+    
+    Create Session     baseurl    ${baseUrl}
+    ${response}=       Post Request        baseurl    list    headers=${headers}     data=${json_data}
     
     Verify User Access     ${response.status_code}            201
-    ${response}=       To Json      ${response.content}  
-    ${list_id}=    Get Value From Json   ${response}    id 
+
+    ${response}=         To Json               ${response.content}  
+    ${list_id}=          Get Value From Json   ${response}                id 
+    ${StatusMsg}=        Get Value From Json   ${response}                status_message
+    ${status_code}=      Get Value From Json   ${response}                status_code
+    ${status_code}=      Convert to string     ${status_code}
+    ${StatusMsg}=        Convert to string     ${StatusMsg}
+    Should Be Equal       ${StatusMsg}         ['The item/record was created successfully.']
+    Should Be Equal       ${status_code}         [1]
+    
     
     [Return]   ${list_id}
      
@@ -48,7 +57,7 @@ Update List For Movie   [Arguments]         ${access_token}     ${list_id}
     ${headerParams}=   Create Dictionary   Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}[0]
     ${headers}=        Set To Dictionary   ${headerParams} 
     
-    ${request_body}    Set Variable   {"description": "ThisIstest"}
+    ${request_body}    Set Variable   {"description": "ThisIstest1233"}
     ${json_data}       To Json    ${request_body}    
     
     Create Session     baseurl    ${baseUrl}
@@ -144,7 +153,7 @@ Check item Status For Movie      [Arguments]       ${access_token}         ${lis
     ${headers}=        Set To Dictionary   ${headerParams} 
        
     Create Session    baseurl    ${baseUrl}   
-    ${response}=      Get Request    baseurl    list/${list_id}[0]/item_status?media_id=${media_id}&media_type=${media_type}    headers=${headers}      
+    ${response}=      Get Request    baseurl    list/${list_id}[0]/item_status?media_id=${media_id}&media_type=${media_type}    headers=${headers}          
          
     Verify User Access     ${response.status_code}            200
 
@@ -154,5 +163,24 @@ Check item Status For Movie      [Arguments]       ${access_token}         ${lis
     [Return]   ${status_message} 
     
 
+
+Get List Details     [Arguments]       ${access_token}         ${list_id}          ${WrongID}=None  
+    [Documentation]    This method Check item Status in created movie list 
+    ${headerParams}=   Create Dictionary   Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}
+    ${headers}=        Set To Dictionary   ${headerParams} 
+       
+    Create Session    baseurl    ${baseUrl}   
+    ${response}=      Get Request    baseurl    list/${list_id}?page=1&api_key=${apiKey}            headers=${headers}
+    
+    Run Keyword If   "${WrongID}"=="True"      Verify User Access     ${response.status_code}           404  
+    Run Keyword If   "${WrongID}"=="None"      Verify User Access     ${response.status_code}             200
+    ${response}=           To Json               ${response.content}      
+    
+    Return From Keyword If    "${WrongID}"=="True"        
+    ${ID}=     Get Value From Json   ${response}        id
+    ${ID}=    Convert To String    ${ID}
+    Should Be Equal    ${ID}    [${list_id}]     
+    
+    [Return]   
 
 

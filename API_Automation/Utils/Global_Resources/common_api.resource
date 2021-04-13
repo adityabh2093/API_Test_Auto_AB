@@ -125,11 +125,27 @@ Chromedriver
     Call Method          ${chrome_options}        add_argument    --disable-dev-shm-usage    
     Call Method          ${chrome_options}        add_argument    --no-sandbox
     ${HeadlessFalse}=    Run Keyword And Return Status       Should Contain      ${TEST TAGS}           HeadlessFalse       
-    Call Method          ${chrome_options}         add_argument    headless
+    Run Keyword If    "${Headless}"=="True"    Call Method          ${chrome_options}         add_argument    headless
     Create Webdriver     ${Browser}     chrome_options=${chrome options}
     
 
   
+
+Update json      [Arguments]            ${TestData}        ${JsonFilename}
+    [Documentation]        This method updating The json as per properties file 
+    ${CURDIR1}=    Replace String    ${CURDIR}    Utils/Global_Resources    Resource       
+    ${Mapping}          Get File   ${CURDIR1}/Json/${JsonFilename}
+    ${json_data}        To Json    ${Mapping}  
+     
+    FOR    ${element}    IN    @{TestData.keys()}
+        
+        ${json}=    Update Value To Json    ${json_data}    ${element}   ${TestData}[${element}]
+        
+    END
+        
+        
+    [Return]         ${json}
+
 
 #Tried Login throgh API and if we get session id 
      # ${headerParams}=   Create Dictionary    Content-Type=application/x-www-form-urlencoded      authority=www.themoviedb.org            origin=https://www.themoviedb.org
