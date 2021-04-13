@@ -23,6 +23,9 @@ API Testing with Robotframework
 
 
 Note :- In config File you need to mention your apikey,apiReadAccessToken,Uname and pass if required else cases will run with default parameters 
+
+	  For running on local if you want store all logs use this command
+	  	- robot -outputDir -T `pwd`/reports   `pwd`/API_Automation/Test_Cases/Movie_List_End_To_End_Flow.robot
    
 
 
