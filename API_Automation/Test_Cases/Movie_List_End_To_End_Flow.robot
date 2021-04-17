@@ -19,7 +19,7 @@ ${list_id}
 *** Test Cases ***    
 Create New List
     [Tags]            Sanity
-    ${list_id}=           Create List For Movie           ${access_token}         CreateNewllistDemo.properties
+    ${list_id}=           Create List For Movie           ${access_token}         CreateNewllistDemo.properties        NewListJsonRes.properties
     Set Suite Variable    ${list_id} 
     Log To Console      ListId=${list_id}      
 

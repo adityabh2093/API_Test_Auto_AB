@@ -24,15 +24,15 @@ ${list_id}
     
 Create New List
     [Tags]            CreateListVerification        smoke
-    ${list_id}=          Create List For Movie           ${access_token}         CreateNewllistDemo.properties
+    ${list_id}=          Create List For Movie           ${access_token}         CreateNewllistDemo.properties        NewListJsonRes.properties
     Set Suite Variable    ${list_id} 
     Log To Console      ListId=${list_id}       
 
 Get List
     [Tags]            CreateListVerification        smoke
-    Get List Details    ${apiReadAccessToken}       ${list_id}[0]
+    Get List Details    ${apiReadAccessToken}       ${list_id}[0]        NewListRes.properties
     
 Validation error message from Get List when wrong ID provide
     [Tags]            CreateListVerification            smoke
-    Get List Details    ${apiReadAccessToken}       ${list_id}[0]12    WrongID=True
+    Get List Details    ${apiReadAccessToken}       ${list_id}[0]12      NewListRes.properties      WrongID=True
 

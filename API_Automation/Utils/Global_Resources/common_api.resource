@@ -147,17 +147,18 @@ Update json      [Arguments]            ${TestData}        ${JsonFilename}
     [Return]         ${json}
 
 
-#Tried Login throgh API and if we get session id 
-     # ${headerParams}=   Create Dictionary    Content-Type=application/x-www-form-urlencoded      authority=www.themoviedb.org            origin=https://www.themoviedb.org
-    # ${headers}=        Set To Dictionary   ${headerParams}    
-       
-    # ${requestBody}=   Create Dictionary    username=ianuppatil   password=password 
-    # ${requestBody}=   Set To Dictionary   ${requestBody} 
+Validate Responce Json   [Arguments]       ${response}            ${ResJsonFile}
      
-    # Create Session     baseurl    ${approveReuestBaseUrl}
-    # ${response}=       Post Request        baseurl    login  data=${requestBody}      headers=${headers}    
-    # ${jsession} =     Get Value From Json   ${response.headers}  Set-Cookie
-    # log to console      ${jsession}
-    # Verify User Access     ${response.status_code}            200
-     # [Return]        ${jsession}
-
+          
+    ${Mapping}       get_properties_File_For_Response     ${ResJsonFile}
+     FOR    ${element}    IN    @{Mapping.keys()}
+        ${Value}=    Get Value From Json    ${response}     ${element}
+        ${Value}=    Convert To String    ${Value}
+        ${Value}    Remove String    ${Value}   '
+        ${Value}    Remove String    ${Value}   [
+        ${Value}    Remove String    ${Value}   ]
+        Should Be Equal    ${Value}    ${Mapping}[${element}]   
+        
+    END 
+    log to console     ${Mapping}
+     

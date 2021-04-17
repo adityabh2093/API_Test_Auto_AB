@@ -35,6 +35,14 @@ class CustomLib:
          testdata_filename=configpath+"/"+testdata_filename
          return CustomLib.get_testData_From_PropertiesFile_withoutGlobal((testdata_filename))       
        
+    @staticmethod  
+    def get_properties_File_For_Response(testdata_filename):
+         print(testdata_filename)
+         configpath=os.path.dirname(os.path.abspath(__file__))
+         configpath=configpath.replace("Utils/PythonLibarary", "Resource/ReposeTestdata")
+         testdata_filename=configpath+"/"+testdata_filename
+         return CustomLib.get_testData_From_PropertiesFile_withoutGlobal((testdata_filename)) 
+        
 def main():
     CustomLib.get_global_config_data()
    # CustomLib.get_testData_From_PropertiesFile()   

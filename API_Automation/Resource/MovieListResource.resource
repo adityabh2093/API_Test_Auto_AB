@@ -5,8 +5,8 @@ Resource        ../Utils/Global_Resources/common_api.resource
 *** Keywords ***
 
 
-Create List For Movie   [Arguments]         ${access_token}         ${FileName}
-    [Documentation]        This method creating list for movies 
+Create List For Movie   [Arguments]         ${access_token}         ${FileName}        ${ResJsonFile}
+    [Documentation]        This method creating list for movies     
     
     ${TestData}=         get config properties without Global         ${FileName}
     ${json_data}=        Update json                     ${TestData}       CreateNewList.json     
@@ -23,13 +23,7 @@ Create List For Movie   [Arguments]         ${access_token}         ${FileName}
 
     ${response}=         To Json               ${response.content}  
     ${list_id}=          Get Value From Json   ${response}                id 
-    ${StatusMsg}=        Get Value From Json   ${response}                status_message
-    ${status_code}=      Get Value From Json   ${response}                status_code
-    ${status_code}=      Convert to string     ${status_code}
-    ${StatusMsg}=        Convert to string     ${StatusMsg}
-    Should Be Equal       ${StatusMsg}         ['The item/record was created successfully.']
-    Should Be Equal       ${status_code}         [1]
-    
+    Validate Responce Json      ${response}            ${ResJsonFile}
     
     [Return]   ${list_id}
      
@@ -164,7 +158,7 @@ Check item Status For Movie      [Arguments]       ${access_token}         ${lis
     
 
 
-Get List Details     [Arguments]       ${access_token}         ${list_id}          ${WrongID}=None  
+Get List Details     [Arguments]       ${access_token}         ${list_id}        ${ResJsonFile}       ${WrongID}=None         
     [Documentation]    This method Check item Status in created movie list 
     ${headerParams}=   Create Dictionary   Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}
     ${headers}=        Set To Dictionary   ${headerParams} 
@@ -180,6 +174,7 @@ Get List Details     [Arguments]       ${access_token}         ${list_id}       
     ${ID}=     Get Value From Json   ${response}        id
     ${ID}=    Convert To String    ${ID}
     Should Be Equal    ${ID}    [${list_id}]     
+    Validate Responce Json      ${response}            ${ResJsonFile}
     
     [Return]   
 
