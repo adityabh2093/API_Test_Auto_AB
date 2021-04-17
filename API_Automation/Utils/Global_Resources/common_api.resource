@@ -133,8 +133,10 @@ Chromedriver
 
 Update json      [Arguments]            ${TestData}        ${JsonFilename}
     [Documentation]        This method updating The json as per properties file 
-    ${CURDIR1}=    Replace String    ${CURDIR}    Utils/Global_Resources    Resource       
-    ${Mapping}          Get File   ${CURDIR1}/Json/${JsonFilename}
+    ${CURDIR1}=    Replace String    ${CURDIR}    ${${OS}}   Resource       
+    ${Mapping}     Run Keyword If    "${OS}"=="mac"        Get File   ${CURDIR1}/Json/${JsonFilename}
+    ${Mapping1}    Run Keyword If    "${OS}"=="windows"    Get File   ${CURDIR1}\\Json\\${JsonFilename}
+    ${Mapping}=    Set Variable If    "${OS}"=="mac"    ${Mapping}        ${Mapping1}
     ${json_data}        To Json    ${Mapping}  
      
     FOR    ${element}    IN    @{TestData.keys()}
@@ -150,7 +152,7 @@ Update json      [Arguments]            ${TestData}        ${JsonFilename}
 Validate Responce Json   [Arguments]       ${response}            ${ResJsonFile}
      
           
-    ${Mapping}       get_properties_File_For_Response     ${ResJsonFile}
+    ${Mapping}       get_properties_File_For_Response     ${ResJsonFile}        ${OS}
      FOR    ${element}    IN    @{Mapping.keys()}
         ${Value}=    Get Value From Json    ${response}     ${element}
         ${Value}=    Convert To String    ${Value}

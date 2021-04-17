@@ -36,3 +36,5 @@ Validation error message from Get List when wrong ID provide
     [Tags]            CreateListVerification            smoke
     Get List Details    ${apiReadAccessToken}       ${list_id}[0]12      NewListRes.properties      WrongID=True
 
+
+

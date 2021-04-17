@@ -8,7 +8,7 @@ Resource        ../Utils/Global_Resources/common_api.resource
 Create List For Movie   [Arguments]         ${access_token}         ${FileName}        ${ResJsonFile}
     [Documentation]        This method creating list for movies     
     
-    ${TestData}=         get config properties without Global         ${FileName}
+    ${TestData}=         get config properties without Global         ${FileName}        ${OS}
     ${json_data}=        Update json                     ${TestData}       CreateNewList.json     
     ${headerParams}=     Create Dictionary               Content-Type=application/json;charset=utf-8    Authorization=Bearer ${access_token}[0]
     ${headers}=          Set To Dictionary               ${headerParams}
@@ -21,7 +21,7 @@ Create List For Movie   [Arguments]         ${access_token}         ${FileName} 
     
     Verify User Access     ${response.status_code}            201
 
-    ${response}=         To Json               ${response.content}  
+    ${response}=         Convert String to JSON                ${response.content}  
     ${list_id}=          Get Value From Json   ${response}                id 
     Validate Responce Json      ${response}            ${ResJsonFile}
     
@@ -39,7 +39,7 @@ Delete List For Movie   [Arguments]         ${access_token}         ${list_id}
     
     Verify User Access     ${response.status_code}            200
 
-    ${response}=         To Json      ${response.content}  
+    ${response}=         Convert String to JSON       ${response.content}  
     ${access_token}=    Get Value From Json   ${response}    access_token 
     
     [Return]   ${access_token}
@@ -52,14 +52,14 @@ Update List For Movie   [Arguments]         ${access_token}     ${list_id}
     ${headers}=        Set To Dictionary   ${headerParams} 
     
     ${request_body}    Set Variable   {"description": "ThisIstest1233"}
-    ${json_data}       To Json    ${request_body}    
+    ${json_data}       Convert String to JSON     ${request_body}    
     
     Create Session     baseurl    ${baseUrl}
     ${response}=       Put Request        baseurl    list/${list_id}[0]    headers=${headers}     data=${json_data}
     
     Verify User Access     ${response.status_code}            201
 
-    ${response}=       To Json      ${response.content}  
+    ${response}=       Convert String to JSON       ${response.content}  
     ${list_id}=        Get Value From Json   ${response}    id 
     
     [Return]   ${list_id}
@@ -72,14 +72,14 @@ Add item In List For Movie   [Arguments]         ${access_token}     ${list_id}
     ${headers}=        Set To Dictionary   ${headerParams} 
     
     ${request_body}    Set Variable      {"items":[{"media_type":"movie","media_id":550},{"media_type":"movie","media_id":244786},{"media_type":"tv","media_id":1396}]}
-    ${json_data}       To Json    ${request_body}    
+    ${json_data}       Convert String to JSON     ${request_body}    
     
     Create Session     baseurl    ${baseUrl}
     ${response}=       Post Request        baseurl    list/${list_id}[0]/items    headers=${headers}     data=${json_data}
     
     Verify User Access     ${response.status_code}            200
 
-    ${response}=       To Json      ${response.content}  
+    ${response}=       Convert String to JSON       ${response.content}  
     ${list_id}=        Get Value From Json   ${response}    id 
     
     [Return]   ${list_id}
@@ -96,7 +96,7 @@ Clear item In List For Movie   [Arguments]         ${access_token}     ${list_id
     ${response}=     Get Request       baseurl    list/${list_id}[0]/clear    headers=${headers}     
     
     Verify User Access     ${response.status_code}            200
-    ${response}=       To Json               ${response.content}  
+    ${response}=       Convert String to JSON                ${response.content}  
     ${list_id}=        Get Value From Json   ${response}    id 
     
     [Return]   ${list_id}
@@ -109,14 +109,14 @@ Update item In List For Movie   [Arguments]         ${access_token}     ${list_i
     ${headers}=        Set To Dictionary   ${headerParams} 
     
     ${request_body}    Set Variable     {"items":[{"media_type":"movie","media_id":194662,"comment":"Amazing movie34!"},{"media_type":"movie","media_id":76203,"comment":"Wow."}]}
-    ${json_data}       To Json    ${request_body}    
+    ${json_data}       Convert String to JSON     ${request_body}    
     
     Create Session     baseurl    ${baseUrl}
     ${response}=       Post Request        baseurl    list/${list_id}[0]/items    headers=${headers}     data=${json_data}
     
     Verify User Access     ${response.status_code}            200
 
-    ${response}=       To Json               ${response.content}  
+    ${response}=       Convert String to JSON                ${response.content}  
     ${list_id}=        Get Value From Json   ${response}    id 
     
     [Return]   ${list_id}
@@ -129,14 +129,15 @@ Remove item In List For Movie   [Arguments]         ${access_token}     ${list_i
     ${headers}=        Set To Dictionary   ${headerParams} 
     
     ${request_body}    Set Variable     {"items":[{"media_type":"movie","media_id":194662,"comment":"Amazing movie34!"},{"media_type":"movie","media_id":76203,"comment":"Wow."}]}
-    ${json_data}       To Json    ${request_body}    
+    ${request_body}=    Convert String to JSON    ${request_body}
+    #${json_data}       Convert String to JSON     ${request_body}    
     
     Create Session     baseurl    ${baseUrl}
-    ${response}=       Delete Request       baseurl    list/${list_id}[0]/items    headers=${headers}     data=${json_data}
+    ${response}=       Delete Request       baseurl    list/${list_id}[0]/items    headers=${headers}     data=${request_body}
     
     Verify User Access     ${response.status_code}            200
 
-    ${response}=       To Json               ${response.content}  
+    ${response}=       Convert String to JSON              ${response.content}  
     ${list_id}=        Get Value From Json   ${response}    id 
     
     [Return]   ${list_id}
@@ -151,7 +152,7 @@ Check item Status For Movie      [Arguments]       ${access_token}         ${lis
          
     Verify User Access     ${response.status_code}            200
 
-    ${response}=           To Json               ${response.content}  
+    ${response}=           Convert String to JSON                ${response.content}  
     ${status_message}=     Get Value From Json   ${response}        status_message
     
     [Return]   ${status_message} 
@@ -168,7 +169,7 @@ Get List Details     [Arguments]       ${access_token}         ${list_id}       
     
     Run Keyword If   "${WrongID}"=="True"      Verify User Access     ${response.status_code}           404  
     Run Keyword If   "${WrongID}"=="None"      Verify User Access     ${response.status_code}             200
-    ${response}=           To Json               ${response.content}      
+    ${response}=           Convert String to JSON                ${response.content}      
     
     Return From Keyword If    "${WrongID}"=="True"        
     ${ID}=     Get Value From Json   ${response}        id
